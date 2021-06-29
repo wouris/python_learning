@@ -1,5 +1,5 @@
 <h1 align="center">Hi 👋, I'm wouris</h1>
-<h3 align="center">A newbie in programming learning Python.</h3>
+<h3 align="center">This is my biggest projct yet. Nothing special, but good for learning.</h3>
 
 - 🔭 I’m currently working on [my test programm](https://github.com/wouris/python_learning/tree/testing)
 
