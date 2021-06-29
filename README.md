@@ -1,2 +1,12 @@
-﻿# python_learning
-So this is my little project. It is not really useful as a program, but very useful for me learning python.
+<h1 align="center">Hi 👋, I'm wouris</h1>
+<h3 align="center">A newbie in programming learning Python.</h3>
+
+- 🔭 I’m currently working on [my test programm](https://github.com/wouris/python_learning/tree/testing)
+
+- 🌱 I’m currently learning **Python**
+
+- 📫 How to reach me **wouris44@gmail.com**
+
+
+<h3 align="left">Languages and Tools:</h3>
+<p align="left"> <a href="https://www.python.org" target="_blank"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> </a> </p>****
