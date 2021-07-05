@@ -1,18 +1,22 @@
 
-#TODO Profile editor, calculator functions
+#TODO Calculator functions
 
 import os
 import time
 import sys
-
+slice = slice(-1)
 name = ''
 surname = ''
 ageplus = ''
 age = ''
 height = ''
 adding = ''
+initnum = 0
 lastnum = 0
 num = 0
+example = ''
+plus = ''
+minus = ''
 whole_name = name + surname
 ageaddup = age + ageplus
 
@@ -330,36 +334,57 @@ def profile_editor():      #ANCHOR Profile editor
 def calculator():       #?can i make it so that it prints whole example? (13 + 3 x 6 / 2 = ...)
     global num
     global lastnum
+    global example
+    global initnum
     screen_clear()
     initnum = int(input('Type a number you want to begin with '))
     num = initnum
     print('1. +')
     choice = int(input())       #TODO Change to while loop for checking if it is number
     if choice == 1:
-        plus()
+        calcplus()
         calculator2()
     
 def calculator2():
     global num
     global lastnum
+    global example
+    global initnum
+    global plus
     screen_clear()
-    print('Answer: ' + str(num))
+    print('Example: ' + str(initnum) + example + ' = ' + str(num))
     print('1. +')
     print('9. Remove last action')
-    choice = int(input()) 
+    choice = int(input())
     if choice == 1:
-        plus()
+        calcplus()
         calculator2()
     elif choice == 9:
         num = lastnum
-        calculator2()
+        if calc_selector == '+':    
+#! BUG: Viem vymazat jednotlive elementy z example (kazde +10 zvalst), ale vysledok sa nemeni. 
+#! FIX: Vedel by som to vyriesit tak, zeby som si 'x' ukadal do var, otocil to pomocou var[::-1] a potom to cislo odpocital od vysledku
+            for x in example[::-1]:
+                if x != calc_selector:
+                    example = example[slice]
+                else:
+                    example = example[slice]
+                    break
+            calculator2()
+                      
 
-def plus():         #ANCHOR Plus
+def calcplus():         #ANCHOR Plus
     global num
     global lastnum
+    global example
+    global plus
+    global calc_selector
+    example = example + ('+')
     print('Pripocitaj cislo ku ' + str(num))
     plus = int(input())
+    calc_selector = '+'
     lastnum = num
+    example = example + str(plus)
     num = num + plus
         
 
