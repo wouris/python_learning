@@ -17,6 +17,7 @@ num = 0
 example = ''
 plus = ''
 minus = ''
+calc_selector = ''
 whole_name = name + surname
 ageaddup = age + ageplus
 
@@ -351,27 +352,50 @@ def calculator2():
     global example
     global initnum
     global plus
+    global calc_selector
     somevar = ''
+    operator = set(['+','-','*','/'])
+    var = 1
     screen_clear()
+    # if var == 1:
+    #     initnum = int(input('Type a number you want to begin with '))
+    #     num = initnum
+    #     var = 0
+    # else:
     print('Example: ' + str(initnum) + example + ' = ' + str(num))
-    print(somevar)
+    print()
     print('1. +')
+    print('2. -')
+    print('3. *')
+    print('4. /')
     print('9. Remove last action')
+    print('0. Exit')
     choice = int(input())
     if choice == 1:
         calcplus()
         calculator2()
-    elif choice == 9:
-        if calc_selector == '+':    
+    elif choice == 2:
+        calcminus()
+        calculator2()
+    elif choice == 9:   
             somevar = ''
             for x in example[::-1]:
-                if x != calc_selector:
+                if not(x in operator):
                     somevar = somevar + x
                     somevar = somevar[::-1]
                     example = example[slice]
-                else:
+                    calc_selector = x
+                else: 
+                    calc_selector = x
                     example = example[slice]
-                    num = num - int(somevar)
+                    if calc_selector == '+':
+                        num = num - int(somevar)
+                    elif calc_selector == '-':
+                        num = num + int(somevar)
+                    elif calc_selector == '*':
+                        num = num / int(somevar)
+                    elif calc_selector == '/':
+                        num = num * int(somevar)
                     break
             calculator2()
                       
@@ -390,7 +414,47 @@ def calcplus():         #ANCHOR Plus
     example = example + str(plus)
     num = num + plus
         
+def calcminus():         #ANCHOR Minus
+    global num
+    global lastnum
+    global example
+    global minus
+    global calc_selector
+    example = example + ('-')
+    print('Subtract number to ' + str(num))
+    minus = int(input())
+    calc_selector = '-'
+    lastnum = num
+    example = example + str(minus)
+    num = num - minus
 
+def calctimes():         #ANCHOR Minus
+    global num
+    global lastnum
+    global example
+    global times
+    global calc_selector
+    example = example + ('*')
+    print('Multiply number to ' + str(num))
+    times = int(input())
+    calc_selector = '*'
+    lastnum = num
+    example = example + str(times)
+    num = num * times
+
+def calcdivision():         #ANCHOR Minus
+    global num
+    global lastnum
+    global example
+    global division
+    global calc_selector
+    example = example + ('/')
+    print('Devide number to ' + str(num))
+    division = int(input())
+    calc_selector = '/'
+    lastnum = num
+    example = example + str(division)
+    num = num * division
 
 def profile():      #ANCHOR Profile
     screen_clear()
