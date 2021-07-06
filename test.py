@@ -89,7 +89,7 @@ def menu():     #ANCHOR Menu
         screen_clear()
         ending()
     else:
-        print('Selected the wrong number - ' + str(selection))
+        print('Bugged ending!!')
 
 def ending():       #ANCHOR Ending
     yes = set(['yes','y', ''])
@@ -351,8 +351,10 @@ def calculator2():
     global example
     global initnum
     global plus
+    somevar = ''
     screen_clear()
     print('Example: ' + str(initnum) + example + ' = ' + str(num))
+    print(somevar)
     print('1. +')
     print('9. Remove last action')
     choice = int(input())
@@ -360,15 +362,16 @@ def calculator2():
         calcplus()
         calculator2()
     elif choice == 9:
-        num = lastnum
         if calc_selector == '+':    
-#! BUG: Viem vymazat jednotlive elementy z example (kazde +10 zvalst), ale vysledok sa nemeni. 
-#! FIX: Vedel by som to vyriesit tak, zeby som si 'x' ukadal do var, otocil to pomocou var[::-1] a potom to cislo odpocital od vysledku
+            somevar = ''
             for x in example[::-1]:
                 if x != calc_selector:
+                    somevar = somevar + x
+                    somevar = somevar[::-1]
                     example = example[slice]
                 else:
                     example = example[slice]
+                    num = num - int(somevar)
                     break
             calculator2()
                       
