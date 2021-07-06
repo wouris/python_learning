@@ -377,6 +377,12 @@ def calculator2():
     elif choice == 2:
         calcminus()
         calculator2()
+    elif choice == 3:
+        calctimes()
+        calculator2()
+    elif choice == 4:
+        calcdivision()
+        calculator2()
     elif choice == 9:   
             somevar = ''
             for x in example[::-1]:
