@@ -1,15 +1,23 @@
 
-#TODO Calculator functions
+#!Known BUGS:
 
+#TODO Calculator functions
 import os
 from random import sample
 from re import S
 import time
 import sys
 import mysql.connector
-slice = slice(-1)
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="",
+)
+
+slice = slice(-1) 
 username = ''
-password = ''
+password = '' 
 name = ''
 surname = ''
 ageplus = ''
@@ -23,20 +31,28 @@ example = ''
 plus = ''
 minus = ''
 calc_selector = ''
-whole_name = name + surname
 ageaddup = age + ageplus
+whole_name = ''
 
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="",
-)
+
 
 def screen_clear():
    if os.name == 'posix':
       _ = os.system('clear')
    else:
       _ = os.system('cls')
+
+def whole_name_from_db():
+    global whole_name
+    sql = "SELECT * FROM passwords WHERE username = %s"
+    adr = (username, )
+    cursor = mydb.cursor(buffered=True)
+    cursor.execute(sql, adr)
+    profilename = cursor.fetchone()
+    name = profilename[1]
+    surname = profilename[2]
+    whole_name = name + ' ' +surname
+    
 
 def yes_no_age():       #ANCHOR Yes and no for age saving
     yes = set(['yes','y', ''])
@@ -227,6 +243,11 @@ def profile_editor():      #ANCHOR Profile editor
     screen_clear()
     none = set(['none','None','Abort','abort'])
 
+    sql = "SELECT * FROM passwords WHERE username = %s"
+    adr = (username, )
+    cursor.execute(sql, adr)
+    profile = cursor.fetchone()
+
     print('     /** Profile editor **\      ' + '\n')
     print('Select, what do you want to change: ' + '\n' +
           '1. Name' + '\n' +
@@ -245,7 +266,7 @@ def profile_editor():      #ANCHOR Profile editor
         profile_select21 = int(input('Your selection: ')) #TODO Change to while loop for checking if it is the correct number
         if profile_select21 == 1:
             screen_clear()
-            print('Your current name - ' + name)
+            print('Your current name - ' + profile[1])
             newname = input("Edit your name (Type 'None' to abort) - ")
             if newname in none:
                 print('Successfully aborted!')
@@ -255,9 +276,12 @@ def profile_editor():      #ANCHOR Profile editor
                     time.sleep(1)
                 profile_editor()
             else:
-                name = newname
-                whole_name = name + ' ' + surname
+                sql = "UPDATE passwords SET name = %s WHERE username = %s"
+                val = (newname, username)
+                cursor.execute(sql, val)
                 screen_clear()
+                mydb.commit()
+                whole_name_from_db()
                 print('Name changed successfully!')
                 print('Your new name - ' + whole_name)
                 for i in range(3, 0, -1):       
@@ -277,8 +301,12 @@ def profile_editor():      #ANCHOR Profile editor
                     time.sleep(1)
                 profile_editor()
             else:
-                surname = newsurname
-                whole_name = name + ' ' + surname
+                sql = "UPDATE passwords SET surname = %s WHERE username = %s"
+                val = (newsurname, username)
+                cursor.execute(sql, val)
+                screen_clear()
+                mydb.commit()
+                whole_name_from_db()
                 screen_clear()
                 print('Surname changed successfully!')
                 print('Your new name - ' + whole_name)
@@ -366,7 +394,6 @@ def calculator2():
     global calc_selector
     somevar = ''
     operator = set(['+','-','*','/'])
-    var = 1
     screen_clear()
     # if var == 1:
     #     initnum = int(input('Type a number you want to begin with '))
@@ -415,6 +442,8 @@ def calculator2():
                         num = num * int(somevar)
                     break
             calculator2()
+    else:
+        menu()
                       
 
 def calcplus():         #ANCHOR +
@@ -473,32 +502,33 @@ def calcdivision():         #ANCHOR /
     example = example + str(division)
     num = num / division
 
-def profile():      #ANCHOR Profiles
+def profile():      #ANCHOR Profile
     screen_clear()
+    whole_name_from_db()
+    sql = "SELECT * FROM passwords WHERE username = %s"
+    adr = (username, )
+    cursor.execute(sql, adr)
+    profile = cursor.fetchone()
     print('Your name: ' + whole_name + '\n' + 
-        'Your age: ' + str(age) + '\n' + 
-        'Your height: ' + str(height), end='')
+        'Your age: ' + str(profile[4]) + '\n' + 
+        'Your height: ' + str(profile[5]), end='')
     print('\n' * 2, end='')
 
-def tempfunction():
-    # cursor.execute("SELECT username FROM passwords")
-    # cursor = mydb.cursor(buffered=True)
-    # cursor.execute("SELECT count(username) FROM passwords")
-    # dbarraycount = cursor.fetchone()[0]
-
-    for x in range(3):
-        username = input('Type your username - ')
-        sql = "SELECT * FROM passwords WHERE username = %s"
-        adr = (username, )
-        cursor.execute(sql, adr)
-        result = cursor.fetchall()
-        if len(result) > 0:
-            print('Welcome, ' + username + '!')
-            time.sleep(3)
-            menu()
-        else:
-            print('Username is not correct....exiting')
-            exit()
+def logincheck():
+    global username
+    username = input('Type your username - ')
+    sql = "SELECT * FROM passwords WHERE username = %s"
+    adr = (username, )
+    cursor.execute(sql, adr)
+    result = cursor.fetchall()
+    if len(result) > 0:
+        screen_clear()
+        print('Welcome, ' + username + '!')
+        time.sleep(2)
+        menu()
+    else:
+        print('Username is not correct....exiting')
+        exit()
 
 def profcreation():
     screen_clear()
@@ -515,7 +545,7 @@ def profcreation():
     while not(surname.isalnum()):
         surname = input('Please, ensure that you use only alphabetic letters - ')
 
-    whole_name = name + ' ' + surname
+
     screen_clear()
     print('Your name: ' + whole_name)
 
@@ -539,9 +569,9 @@ def profcreation():
 
 
     mydb.commit()
-    tempfunction()
+    logincheck()
 
-#ANCHOR DB connection and 
+#ANCHOR DB connection
 mydb = mysql.connector.connect(
   host="localhost",
   user="root",
@@ -573,6 +603,6 @@ cursor.execute("SELECT id FROM passwords")
 if len(cursor.fetchall()) <= 0:
     profcreation()    
 else:
-    tempfunction()
+    logincheck()
 
 
