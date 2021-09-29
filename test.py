@@ -2,9 +2,14 @@
 #TODO Calculator functions
 
 import os
+from random import sample
+from re import S
 import time
 import sys
+import mysql.connector
 slice = slice(-1)
+username = ''
+password = ''
 name = ''
 surname = ''
 ageplus = ''
@@ -20,6 +25,12 @@ minus = ''
 calc_selector = ''
 whole_name = name + surname
 ageaddup = age + ageplus
+
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="",
+)
 
 def screen_clear():
    if os.name == 'posix':
@@ -406,7 +417,7 @@ def calculator2():
             calculator2()
                       
 
-def calcplus():         #ANCHOR Plus
+def calcplus():         #ANCHOR +
     global num
     global lastnum
     global example
@@ -420,7 +431,7 @@ def calcplus():         #ANCHOR Plus
     example = example + str(plus)
     num = num + plus
         
-def calcminus():         #ANCHOR Minus
+def calcminus():         #ANCHOR -
     global num
     global lastnum
     global example
@@ -434,7 +445,7 @@ def calcminus():         #ANCHOR Minus
     example = example + str(minus)
     num = num - minus
 
-def calctimes():         #ANCHOR Minus
+def calctimes():         #ANCHOR *
     global num
     global lastnum
     global example
@@ -448,7 +459,7 @@ def calctimes():         #ANCHOR Minus
     example = example + str(times)
     num = num * times
 
-def calcdivision():         #ANCHOR Minus
+def calcdivision():         #ANCHOR /
     global num
     global lastnum
     global example
@@ -460,41 +471,108 @@ def calcdivision():         #ANCHOR Minus
     calc_selector = '/'
     lastnum = num
     example = example + str(division)
-    num = num * division
+    num = num / division
 
-def profile():      #ANCHOR Profile
+def profile():      #ANCHOR Profiles
     screen_clear()
     print('Your name: ' + whole_name + '\n' + 
         'Your age: ' + str(age) + '\n' + 
         'Your height: ' + str(height), end='')
     print('\n' * 2, end='')
 
-screen_clear()
-name = input('What is your name? - ')
-while not(name.isalnum()):
-    name = input('Please, ensure that you use only alphabetic letters - ')
+def tempfunction():
+    # cursor.execute("SELECT username FROM passwords")
+    # cursor = mydb.cursor(buffered=True)
+    # cursor.execute("SELECT count(username) FROM passwords")
+    # dbarraycount = cursor.fetchone()[0]
+
+    for x in range(3):
+        username = input('Type your username - ')
+        sql = "SELECT * FROM passwords WHERE username = %s"
+        adr = (username, )
+        cursor.execute(sql, adr)
+        result = cursor.fetchall()
+        if len(result) > 0:
+            print('Welcome, ' + username + '!')
+            time.sleep(3)
+            menu()
+        else:
+            print('Username is not correct....exiting')
+            exit()
+
+def profcreation():
+    screen_clear()
+    print('----Profile Creator----')
+    username = input('Type your username - ')
+    password = input('Type your password - ')
+
+    screen_clear()
+    name = input('What is your name? - ')
+    while not(name.isalnum()):
+        name = input('Please, ensure that you use only alphabetic letters - ')
+    
+    surname = input('What is your surname? - ')
+    while not(surname.isalnum()):
+        surname = input('Please, ensure that you use only alphabetic letters - ')
+
+    whole_name = name + ' ' + surname
+    screen_clear()
+    print('Your name: ' + whole_name)
+
+    age = input('How old are you? - ')
+    while not(age.isdigit()):
+        age = input('Please use only numbers - ')
+
+    screen_clear()
+    age = round(int(age))
+    print('Your name: ' + whole_name + '\n' + 
+        'Your age: ' + str(age))
+
+    height = input('How tall are you? - ')
+    while not(height.isdigit()):
+        height = input('Please use only numbers - ')
+
+    cursor = mydb.cursor(buffered=True)
+    sql = "INSERT INTO passwords (username, password, name, surname, age, height) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (username, password, name, surname, age, height)
+    cursor.execute(sql, val)
 
 
-surname = input('What is your surname? - ')
-while not(surname.isalnum()):
-    surname = input('Please, ensure that you use only alphabetic letters - ')
+    mydb.commit()
+    tempfunction()
 
-whole_name = name + ' ' + surname
-screen_clear()
-print('Your name: ' + whole_name)
+#ANCHOR DB connection and 
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password="",
+)
+cursor = mydb.cursor()
 
-age = input('How old are you? - ')
-while not(age.isdigit()):
-    age = input('Please use only numbers - ')
+try:
+    cursor.execute("CREATE DATABASE pswds")
+    print('Created DB for passwords')
+except:
+    mydb = mysql.connector.connect(
+     host="localhost",
+     user="root",
+     password="",
+     database="pswds"
+    )
 
-screen_clear()
-age = round(int(age))
-print('Your name: ' + whole_name + '\n' + 
-       'Your age: ' + str(age))
 
-height = input('How tall are you? - ')
-while not(height.isdigit()):
-    height = input('Please use only numbers - ')
+try:
+    cursor = mydb.cursor()
+    cursor.execute("CREATE TABLE passwords (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), surname VARCHAR(255), username VARCHAR(255), age INT, height INT, password VARCHAR(255))")
+except:
+    screen_clear()
 
-menu()
+cursor.execute("SELECT id FROM passwords")
+# cursor.fetchall()
+# profcreation()
+if len(cursor.fetchall()) <= 0:
+    profcreation()    
+else:
+    tempfunction()
+
 
