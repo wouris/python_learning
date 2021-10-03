@@ -59,12 +59,19 @@ def yes_no_age():       #ANCHOR Yes and no for age saving
     no = set(['no','n'])
     global age
     global ageaddup
+
+    sql = ("SELECT age from passwords WHERE username = %s")
+    adr = (username, )
+    cursor.execute(sql, adr)
+    age = cursor.fetchone()[0]
      
     while True:
         print('Your current age: ' + str(age))
         print('Your age after saving: ' + str(ageaddup) + '\n')
         choice = input('Do you want to save changes?(Y/N)').lower()
         if choice in yes:
+
+           sql = "INSERT "
            age = ageaddup
            print('Saved!')
            for i in range(3, 0, -1):
@@ -138,6 +145,11 @@ def ageselection():     #ANCHOR Age selection
     global ageaddup
     screen_clear()
 
+    sql = ("SELECT age from passwords WHERE username = %s")
+    adr = (username, )
+    cursor.execute(sql, adr)
+    age = cursor.fetchone()[0]
+
     print('Your age: ' + str(age) + ('\n' * 2), end='')
     print('Select a function:' + '\n' +
             '1. + Your Age' + '\n' +
@@ -205,7 +217,7 @@ def ageselection():     #ANCHOR Age selection
                 ageminus = input('Entered value must not be a negative number - ')
         
         ageminus = int(ageminus)
-        subtract = age - ageminus 
+        subtract = int(age) - ageminus 
 
         while subtract < 0:
             ageminus = input('Result would be negative age, please type again - ')
@@ -316,6 +328,10 @@ def profile_editor():      #ANCHOR Profile editor
                 profile_editor()
 
     elif profile_select == 2:
+        sql = ("SELECT age from passwords WHERE username = %s")
+        adr = (username, )
+        cursor.execute(sql, adr)
+        age = cursor.fetchone()[0]
         screen_clear()
         print('Type 0 for exit'+ '\n'*2, end = '')
         print('Your current age - ' + str(age) + '\n')
@@ -329,7 +345,10 @@ def profile_editor():      #ANCHOR Profile editor
                 print('Your age after saving: ' + str(profile_select22) + '\n')
                 choice = input('Do you want to save changes?(Y/n)').lower()
                 if choice in yes:
-                    age = profile_select22
+                    sql = "UPDATE passwords SET age = %s WHERE username = %s"
+                    val = (profile_select22, username)
+                    cursor.execute(sql, val)
+                    mydb.commit()
                     print('Saved!')
                     for i in range(3, 0, -1):
                         print('Exiting to profile editor in ' + str(i))
@@ -343,6 +362,11 @@ def profile_editor():      #ANCHOR Profile editor
             menu()
 
     elif profile_select == 3:
+        sql = ("SELECT height from passwords WHERE username = %s")
+        adr = (username, )
+        cursor.execute(sql, adr)
+        height = cursor.fetchone()[0]
+        mydb.commit()
         screen_clear()
         print('Type 0 for exit'+ '\n'*2, end = '')
         print('Your current height - ' + str(height) + ' cm' + '\n')
@@ -356,7 +380,10 @@ def profile_editor():      #ANCHOR Profile editor
                 print('Your height after saving: ' + str(profile_select23) + ' cm' + '\n')
                 choice = input('Do you want to save changes?(Y/n)').lower()
                 if choice in yes:
-                    height = profile_select23
+                    sql = "UPDATE passwords SET height = %s WHERE username = %s"
+                    val = (profile_select23, username)
+                    cursor.execute(sql, val)
+                    mydb.commit()
                     print('Saved!')
                     for i in range(3, 0, -1):
                         print('Exiting to profile editor in ' + str(i))
@@ -523,7 +550,7 @@ def logincheck():
     result = cursor.fetchall()
     if len(result) > 0:
         screen_clear()
-        print('Welcome, ' + username + '!')
+        print('Welcome, ' + username + '!') 
         time.sleep(2)
         menu()
     else:
