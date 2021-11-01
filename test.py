@@ -1,13 +1,18 @@
 
 #!Known BUGS:
 
+#Dependencies for this programm --- mysql.connector & Pillow // pip install
 #TODO Calculator functions
-import os
-from random import sample
-from re import S
+import os                               
+# from random import sample             #idk why are these two here, so i will remove them when i find out that they make no sense
+# from re import S
 import time
 import sys
 import mysql.connector
+import tkinter
+from tkinter import *
+from tkinter import messagebox
+from PIL import Image, ImageTk
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -34,7 +39,49 @@ calc_selector = ''
 ageaddup = age + ageplus
 whole_name = ''
 
+#creating login and the main window - age calculator button, calculator, profile editor, profiel creator etc...
+loginwindow = tkinter.Tk()
+loginwindow.eval('tk::PlaceWindow . center')
+mainwindow = tkinter.Tk()
+mainwindow.geometry("200x200")
+mainwindow.eval(f'tk::PlaceWindow . center')
+mainwindow.withdraw()
 
+def mainscreen():       #ANCHOR mainscreen
+    mainwindow.configure(background='#242424')
+    mainwindow.resizable(False, False)
+    mainwindow.geometry('450x250')
+    mainwindow.title('Project Py')
+    mainwindow.deiconify()
+    mainwindow.protocol("WM_DELETE_WINDOW", on_closing)
+
+    menubg = Label(
+        mainwindow,
+        bg='purple',
+        height='100',
+        width='10'
+    )
+    menubg.place(anchor=NW)
+    image = Image.open("menuimgs/agecalculator.png")
+    resize_image = image.resize((10, 10))
+    photoimage = PhotoImage(master = mainwindow, file=resize_image)
+    agecalcbutton = Button(
+    mainwindow,
+    image=photoimage
+    )
+    agecalcbutton.pack()
+
+def login():        #ANCHOR loginscreen
+    username = input.get()
+    sql = "SELECT * FROM passwords WHERE username = %s"
+    adr = (username, )
+    cursor.execute(sql, adr)
+    result = cursor.fetchall()
+    if len(result) > 0:
+        loginwindow.withdraw()
+        mainscreen()
+    else:
+        messagebox.showerror(title='Login Error', message='Incorrect username!')
 
 def screen_clear():
    if os.name == 'posix':
@@ -398,7 +445,7 @@ def profile_editor():      #ANCHOR Profile editor
     elif profile_select == 0:
         menu()
 
-def calculator():       #?can i make it so that it prints whole example? (13 + 3 x 6 / 2 = ...)
+def calculator():
     global num
     global lastnum
     global example
@@ -541,7 +588,7 @@ def profile():      #ANCHOR Profile
         'Your height: ' + str(profile[5]), end='')
     print('\n' * 2, end='')
 
-def logincheck():
+def logincheck():   #ANCHOR Logincheck
     global username
     username = input('Type your username - ')
     sql = "SELECT * FROM passwords WHERE username = %s"
@@ -557,7 +604,7 @@ def logincheck():
         print('Username is not correct....exiting')
         exit()
 
-def profcreation():
+def profcreation():     #ANCHOR Profilecreation
     screen_clear()
     print('----Profile Creator----')
     username = input('Type your username - ')
@@ -598,6 +645,11 @@ def profcreation():
     mydb.commit()
     logincheck()
 
+def on_closing():
+    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+        mainwindow.destroy()
+        loginwindow.destroy()
+
 #ANCHOR DB connection
 mydb = mysql.connector.connect(
   host="localhost",
@@ -630,6 +682,35 @@ cursor.execute("SELECT id FROM passwords")
 if len(cursor.fetchall()) <= 0:
     profcreation()    
 else:
-    logincheck()
+    loginwindow.configure(background='#cfe2f3')
+    loginwindow.resizable(False, False)
+
+    loginwindow.geometry('400x200')
+    loginwindow.title('Project Py')
+
+    label = Label(
+        loginwindow, 
+        text='Username', 
+        font='Cascadia'
+    )
+    label.place(relx=0.3, rely=0.5, anchor=CENTER)
+
+    input = Entry(
+        loginwindow
+    )
+    input.place(relx=0.6, rely=0.5, anchor=CENTER)
+
+    button = Button(
+        loginwindow,
+        text='Login',
+        command=login,
+    )
+    button.place(relx=0.5, rely=0.7, anchor=CENTER)
+    loginwindow.protocol("WM_DELETE_WINDOW", on_closing)        #Needs to be at the end to secure safe exiting
+
+    icon = PhotoImage(file='python-original.png')
+    loginwindow.iconphoto(True,icon)
+
+    loginwindow.mainloop() 
 
 
