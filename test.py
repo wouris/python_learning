@@ -495,7 +495,7 @@ def calculator2():
     elif choice == 4:
         calcdivision()
         calculator2()
-    elif choice == 9:   
+    elif choice == 9:
             somevar = ''
             for x in example[::-1]:
                 if not(x in operator):
@@ -651,12 +651,7 @@ def on_closing():
         loginwindow.destroy()
 
 #ANCHOR DB connection
-mydb = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password="",
-)
-cursor = mydb.cursor()
+
 
 try:
     cursor.execute("CREATE DATABASE pswds")

@@ -1,4 +1,7 @@
-agecalcbutton = Button(
-   mainwindow,
-   image=label
-)
+menubg = Label(
+#     mainwindow,
+#     bg='purple',
+#     height='100',
+#     width='10'
+# )
+# menubg.pack(side = LEFT)
