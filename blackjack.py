@@ -35,7 +35,7 @@ card_nums = ['A','2','3','4','5','6','7','8','9','J','Q','K']
 money = 500
 pcardsum = 0
 dcardsum = 0
-def genacard(card, turn, ):
+def genacard(card, turn):
     global pcardsum
     global dcardsum
     
@@ -44,7 +44,16 @@ def genacard(card, turn, ):
     card = randnum + randsym
     
     if randnum == ['A']:
-        randnum[0] = '11'
+        if turn == 'player':
+            if pcardsum <= 10:
+                randnum[0] = '11'
+            else:
+                randnum[0] = '1'
+        elif turn == 'dealer':
+            if dcardsum <= 10:
+                randnum[0] = '11'
+            else:
+                randnum[0] = '1'
     elif randnum == ['J']:
         randnum[0] = '10'
     elif randnum == ['Q']:
@@ -69,7 +78,14 @@ def win(bet):
     global wontimes
     money += bet
     wontimes += 1
-    print('Sum: ' + str(pcardsum) + '\n' + 'You won $' + str(bet))
+    clrscr()
+    print('You are dealt: ' + ', '.join(cardsplayer))
+    print('Dealer is dealt: ' + ', '.join(cardsdealer))
+    print('\n' +
+          '!You won!'+ '\n' + 
+          'You: ' + str(pcardsum) + '\n' + 
+          'Dealer: '+ str(dcardsum) + '\n' + 
+          'You won $' + str(bet) + '\n')
     
 def winblackjack(bet):
     global money
@@ -81,7 +97,14 @@ def loose(bet):
     global losttimes
     money -= bet
     losttimes += 1
-    print('You have lost $' + str(bet))
+    clrscr()
+    print('You are dealt: ' + ', '.join(cardsplayer))
+    print('Dealer is dealt: ' + ', '.join(cardsdealer))
+    print('\n' +
+          '!You lost!'+ '\n' + 
+          'You: ' + str(pcardsum) + '\n' + 
+          'Dealer: '+ str(dcardsum) + '\n' + 
+          'You lost $' + str(bet) + '\n')
     
 
     
@@ -123,60 +146,63 @@ while True: #GAME STARTS
     if money == 0:
         print('You lost all of your money. Please restart the game and try again.')
         exit()
-    choice = input('You are starting off with $' + str(money) + '\n' + 'Would you like to start? ')
+    choice = input('You are starting off with $' + str(money) + '\n' + 'Would you like to start? ')    
     try:
         bet = int(choice)
-        choice = 'yes'
+        if bet > money:
+            print('Insufficient funds for the bet!')
+            time.sleep(2)
+        else:
+            choice = 'yes'
     except:
-        pass
+        break
     if choice in yes:
-            while bet <= 0:
+        while bet <= 0 or money < bet:
                 try:
                     bet = float(input('Place your bet: '))
                 except:
                     print('Invalid input. Please try again.')
                     continue
                 if bet < 0.99:
-                    print('Minimum bet is $1.' + '\n')
+                    print('Minimum bet is $1.')
                 elif bet > money:
                     print('Insufficient funds!')
                 else:
                     break
-            clrscr()
-            cardsplayer = []
-            print('Your bet: ' + str(bet) + '\n')
-            for i in range(2):  #generating player cards
+        clrscr()
+        cardsplayer = []
+        print('Your bet: ' + str(bet) + '\n')
+        for i in range(2):  #generating player cards
+            cardsplayer.append(genacard('card', 'player'))
+        print('You are dealt: ' + ", ".join(cardsplayer))
+        time.sleep(1)
+        if pcardsum == 21:
+                winblackjack(bet)
+                input('Press any key to continue...')
+                continue
+        
+        cardsdealer = []
+        for i in range(2):  #generating dealer cards
+            cardsdealer.append(genacard('card', 'dealer'))
+        print('The dealer is dealt: ' + ''.join(cardsdealer[:-1]) + ', XX')
+        time.sleep(1)
+        
+        
+        while True:
+            choice = None
+            choice = input('Would you like to hit or stay? ')
+            if choice in hit:
                 cardsplayer.append(genacard('card', 'player'))
-            print('You are dealt: ' + ", ".join(cardsplayer))
-            time.sleep(1)
-            if pcardsum == 21:
-                 winblackjack(bet)
-                 input('Press any key to continue...')
-                 continue
-           
-            cardsdealer = []
-            for i in range(2):  #generating dealer cards
-                cardsdealer.append(genacard('card', 'dealer'))
-            print('The dealer is dealt: ' + ''.join(cardsdealer[:-1]) + ', XX')
-            time.sleep(1)
-            
-            
-            while True:
-                choice = None
-                choice = input('Would you like to hit or stay? ')
-                if choice in hit:
-                    cardsplayer.append(genacard('card', 'player'))
-                    print('You are dealt: ' + ", ".join(cardsplayer))
-                    if pcardsum > 21:
-                        loose(bet)
-                        break
-                elif choice in stay:
-                    dealersturn()
+                print('You are dealt: ' + ", ".join(cardsplayer))
+                if pcardsum > 21:
+                    loose(bet)
                     break
-                            
-                            
-            input('Press any key to continue...')
-            # break   # !remove this after completion - This ends the program
+            elif choice in stay:
+                dealersturn()
+                break
+                        
+                        
+        input('Press any key to continue...') # this will 
         
     elif choice in no:
         clrscr()
