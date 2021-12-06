@@ -54,7 +54,7 @@ def genacard(card, turn):
     
     if turn == 'player':
         for i in randnum:
-            pcardsum = 21
+            pcardsum += int(i)
     elif turn == 'dealer':
         for i in randnum:
             dcardsum += int(i)
