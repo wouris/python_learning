@@ -101,7 +101,8 @@ def dealersturn():
 
 yes = set(['Yes','yes', 'Y', 'y', ''])
 no = set(['No', 'no', 'N', 'n'])
-hit_stay = set(['hit','stay'])
+hit = set(['hit','h'])
+stay = set(['stay', 's'])
 
 while True: #GAME STARTS
     clrscr()
@@ -131,7 +132,7 @@ while True: #GAME STARTS
             for i in range(2):  #generating player cards
                 cardsplayer.append(genacard('card', 'player'))
             print('You are dealt: ' + ", ".join(cardsplayer))
-            time.sleep(2)
+            time.sleep(1)
             if pcardsum == 21:
                  winblackjack(bet)
                  input('Press any key to continue...')
@@ -146,17 +147,14 @@ while True: #GAME STARTS
             
             while True:
                 choice = None
-                while not choice in hit_stay:
-                    choice = input('Would you like to hit or stay? ')
-                    if choice not in hit_stay:
-                        print('That is an invalid option.')
-                if choice == 'hit':
+                choice = input('Would you like to hit or stay? ')
+                if choice in hit:
                     cardsplayer.append(genacard('card', 'player'))
                     print('You are dealt: ' + ", ".join(cardsplayer))
                     if pcardsum > 21:
                         loose(bet)
                         break
-                elif choice == 'stay':
+                elif choice in stay:
                     dealersturn()
                     break
                             
@@ -167,3 +165,5 @@ while True: #GAME STARTS
     elif choice in no:
         print('You ended the game with $' + str(money) + '! Goodbye.')
         exit()
+    elif choice == 'daj mi penaze':
+        money += 5000
