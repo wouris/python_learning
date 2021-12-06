@@ -155,7 +155,8 @@ while True: #GAME STARTS
         else:
             choice = 'yes'
     except:
-        break
+        pass
+    
     if choice in yes:
         while bet <= 0 or money < bet:
                 try:
@@ -209,7 +210,7 @@ while True: #GAME STARTS
         title()
         print('You have ended the game.' + '\n'*2 +
               'Your score: ' +
-              '$' + str(money) + '\t' +
+              '$' + str(money) + '\n'*4 +
               'Won: ' + str(wontimes) + ' times' + '\t' +
               'Lost: ' + str(losttimes) + ' times' + '\n')
         exit()
