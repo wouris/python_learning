@@ -209,9 +209,9 @@ while True: #GAME STARTS
         clrscr()
         title()
         print('You have ended the game.' + '\n'*2 +
-              'Your score: ' +
-              '$' + str(money) + '\n'*4 +
-              'Won: ' + str(wontimes) + ' times' + '\t' +
+              'Your score: '+
+              '$' + str(money) + ' '*4 +
+              'Won: ' + str(wontimes) + ' times' + ' '*4 +
               'Lost: ' + str(losttimes) + ' times' + '\n')
         exit()
     elif choice == 'daj mi penaze':
