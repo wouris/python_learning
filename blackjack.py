@@ -8,14 +8,14 @@ import time
 def title():
     print(
     ' _______   __                      __                 _____                      __    ' + '\n' +
-'/       \ /  |                    /  |               /     |                    /  |      ' + '\n' +
-'$$$$$$$  |$$ |  ______    _______ $$ |   __          $$$$$ |  ______    _______ $$ |   __ ' + '\n' +
-'$$ |__$$ |$$ | /      \  /       |$$ |  /  |            $$ | /      \  /       |$$ |  /  |'+ '\n' +
-'$$    $$< $$ | $$$$$$  |/$$$$$$$/ $$ |_/$$/        __   $$ | $$$$$$  |/$$$$$$$/ $$ |_/$$/ '+ '\n' +
-'$$$$$$$  |$$ | /    $$ |$$ |      $$   $$<        /  |  $$ | /    $$ |$$ |      $$   $$<  '+ '\n' +
-'$$ |__$$ |$$ |/$$$$$$$ |$$ \_____ $$$$$$  \       $$ \__$$ |/$$$$$$$ |$$ \_____ $$$$$$  \ '+ '\n' +
-'$$    $$/ $$ |$$    $$ |$$       |$$ | $$  |      $$    $$/ $$    $$ |$$       |$$ | $$  |'+ '\n' +
-'$$$$$$$/  $$/  $$$$$$$/  $$$$$$$/ $$/   $$/        $$$$$$/   $$$$$$$/  $$$$$$$/ $$/   $$/ '+ '\n'
+    '/       \ /  |                    /  |               /     |                    /  |      ' + '\n' +
+    '$$$$$$$  |$$ |  ______    _______ $$ |   __          $$$$$ |  ______    _______ $$ |   __ ' + '\n' +
+    '$$ |__$$ |$$ | /      \  /       |$$ |  /  |            $$ | /      \  /       |$$ |  /  |'+ '\n' +
+    '$$    $$< $$ | $$$$$$  |/$$$$$$$/ $$ |_/$$/        __   $$ | $$$$$$  |/$$$$$$$/ $$ |_/$$/ '+ '\n' +
+    '$$$$$$$  |$$ | /    $$ |$$ |      $$   $$<        /  |  $$ | /    $$ |$$ |      $$   $$<  '+ '\n' +
+    '$$ |__$$ |$$ |/$$$$$$$ |$$ \_____ $$$$$$  \       $$ \__$$ |/$$$$$$$ |$$ \_____ $$$$$$  \ '+ '\n' +
+    '$$    $$/ $$ |$$    $$ |$$       |$$ | $$  |      $$    $$/ $$    $$ |$$       |$$ | $$  |'+ '\n' +
+    '$$$$$$$/  $$/  $$$$$$$/  $$$$$$$/ $$/   $$/        $$$$$$/   $$$$$$$/  $$$$$$$/ $$/   $$/ '+ '\n'
     )
 
 def clrscr():   #clearing the screen
@@ -35,7 +35,7 @@ card_nums = ['A','2','3','4','5','6','7','8','9','J','Q','K']
 money = 500
 pcardsum = 0
 dcardsum = 0
-def genacard(card, turn):
+def genacard(card, turn, ):
     global pcardsum
     global dcardsum
     
@@ -61,10 +61,14 @@ def genacard(card, turn):
     
     return ' '.join(card)
 
+wontimes = 0
+losttimes = 0
 def win(bet):
     global money
     global pcardsum
+    global wontimes
     money += bet
+    wontimes += 1
     print('Sum: ' + str(pcardsum) + '\n' + 'You won $' + str(bet))
     
 def winblackjack(bet):
@@ -74,11 +78,16 @@ def winblackjack(bet):
     
 def loose(bet):
     global money
+    global losttimes
     money -= bet
+    losttimes += 1
     print('You have lost $' + str(bet))
     
+
     
 def dealersturn():
+    global wontimes
+    global losttimes
     while True:
         clrscr()
         print('You are dealt: ' + ', '.join(cardsplayer))
@@ -104,18 +113,24 @@ no = set(['No', 'no', 'N', 'n'])
 hit = set(['hit','h'])
 stay = set(['stay', 's'])
 
+
 while True: #GAME STARTS
     clrscr()
     title()
     pcardsum = 0
     dcardsum = 0
+    bet = 0
     if money == 0:
         print('You lost all of your money. Please restart the game and try again.')
         exit()
     choice = input('You are starting off with $' + str(money) + '\n' + 'Would you like to start? ')
+    try:
+        bet = int(choice)
+        choice = 'yes'
+    except:
+        pass
     if choice in yes:
-            bet = 0
-            while True:
+            while bet <= 0:
                 try:
                     bet = float(input('Place your bet: '))
                 except:
@@ -129,6 +144,7 @@ while True: #GAME STARTS
                     break
             clrscr()
             cardsplayer = []
+            print('Your bet: ' + str(bet) + '\n')
             for i in range(2):  #generating player cards
                 cardsplayer.append(genacard('card', 'player'))
             print('You are dealt: ' + ", ".join(cardsplayer))
@@ -163,7 +179,13 @@ while True: #GAME STARTS
             # break   # !remove this after completion - This ends the program
         
     elif choice in no:
-        print('You ended the game with $' + str(money) + '! Goodbye.')
+        clrscr()
+        title()
+        print('You have ended the game.' + '\n'*2 +
+              'Your score: ' +
+              '$' + str(money) + '\t' +
+              'Won: ' + str(wontimes) + ' times' + '\t' +
+              'Lost: ' + str(losttimes) + ' times' + '\n')
         exit()
     elif choice == 'daj mi penaze':
         money += 5000
