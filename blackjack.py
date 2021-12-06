@@ -54,7 +54,7 @@ def genacard(card, turn):
     
     if turn == 'player':
         for i in randnum:
-            pcardsum += int(i)
+            pcardsum = 21
     elif turn == 'dealer':
         for i in randnum:
             dcardsum += int(i)
@@ -133,8 +133,9 @@ while True: #GAME STARTS
             print('You are dealt: ' + ", ".join(cardsplayer))
             time.sleep(2)
             if pcardsum == 21:
-                winblackjack(bet)
-                break
+                 winblackjack(bet)
+                 input('Press any key to continue...')
+                 continue
            
             cardsdealer = []
             for i in range(2):  #generating dealer cards
@@ -165,4 +166,4 @@ while True: #GAME STARTS
         
     elif choice in no:
         print('You ended the game with $' + str(money) + '! Goodbye.')
-        break
+        exit()
